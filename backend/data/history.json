@@ -1,0 +1,214 @@
+{
+  "lessons": [
+    {
+      "date": "2026-10-01T18:56:29.537357",
+      "results": [
+        {
+          "word": "raam",
+          "guess": "de",
+          "correct": false
+        },
+        {
+          "word": "krant",
+          "guess": "het",
+          "correct": false
+        },
+        {
+          "word": "vlees",
+          "guess": "de",
+          "correct": false
+        },
+        {
+          "word": "neus",
+          "guess": "de",
+          "correct": true
+        },
+        {
+          "word": "woord",
+          "guess": "het",
+          "correct": true
+        },
+        {
+          "word": "bos",
+          "guess": "de",
+          "correct": false
+        },
+        {
+          "word": "nacht",
+          "guess": "de",
+          "correct": true
+        },
+        {
+          "word": "jas",
+          "guess": "de",
+          "correct": true
+        },
+        {
+          "word": "vriend",
+          "guess": "de",
+          "correct": true
+        },
+        {
+          "word": "vraag",
+          "guess": "de",
+          "correct": true
+        },
+        {
+          "word": "brood",
+          "guess": "het",
+          "correct": true
+        },
+        {
+          "word": "maand",
+          "guess": "de",
+          "correct": true
+        },
+        {
+          "word": "kantoor",
+          "guess": "het",
+          "correct": true
+        },
+        {
+          "word": "weekend",
+          "guess": "de",
+          "correct": false
+        },
+        {
+          "word": "fles",
+          "guess": "de",
+          "correct": true
+        },
+        {
+          "word": "telefoon",
+          "guess": "het",
+          "correct": false
+        },
+        {
+          "word": "kat",
+          "guess": "de",
+          "correct": true
+        },
+        {
+          "word": "paard",
+          "guess": "de",
+          "correct": false
+        },
+        {
+          "word": "oor",
+          "guess": "de",
+          "correct": false
+        },
+        {
+          "word": "mes",
+          "guess": "de",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "date": "2026-10-08T22:24:42.292543",
+      "results": [
+        {
+          "word": "telefoon",
+          "guess": "het",
+          "correct": false
+        },
+        {
+          "word": "zus",
+          "guess": "de",
+          "correct": true
+        },
+        {
+          "word": "raam",
+          "guess": "het",
+          "correct": true
+        },
+        {
+          "word": "mes",
+          "guess": "de",
+          "correct": false
+        },
+        {
+          "word": "hand",
+          "guess": "de",
+          "correct": true
+        },
+        {
+          "word": "krant",
+          "guess": "het",
+          "correct": false
+        },
+        {
+          "word": "boom",
+          "guess": "de",
+          "correct": true
+        },
+        {
+          "word": "ziekenhuis",
+          "guess": "de",
+          "correct": false
+        },
+        {
+          "word": "paard",
+          "guess": "het",
+          "correct": true
+        },
+        {
+          "word": "vlees",
+          "guess": "het",
+          "correct": true
+        },
+        {
+          "word": "kopje",
+          "guess": "de",
+          "correct": false
+        },
+        {
+          "word": "tuin",
+          "guess": "het",
+          "correct": false
+        },
+        {
+          "word": "park",
+          "guess": "het",
+          "correct": true
+        },
+        {
+          "word": "stad",
+          "guess": "het",
+          "correct": false
+        },
+        {
+          "word": "bos",
+          "guess": "de",
+          "correct": false
+        },
+        {
+          "word": "oor",
+          "guess": "het",
+          "correct": true
+        },
+        {
+          "word": "tijd",
+          "guess": "het",
+          "correct": false
+        },
+        {
+          "word": "strand",
+          "guess": "het",
+          "correct": true
+        },
+        {
+          "word": "boek",
+          "guess": "de",
+          "correct": false
+        },
+        {
+          "word": "weekend",
+          "guess": "het",
+          "correct": true
+        }
+      ]
+    }
+  ]
+}

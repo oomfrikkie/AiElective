@@ -1,0 +1,19 @@
+# Environment
+.env
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Data & model (large files)
+backend/data/dutchDictionary.jsonl
+backend/data/dehet_data.csv
+backend/data/dehet_model.pt
+
+# Node
+frontend/node_modules/
+frontend/dist/
+
+# Docker
+*.log
