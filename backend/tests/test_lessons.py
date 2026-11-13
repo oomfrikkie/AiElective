@@ -19,7 +19,16 @@ class WordLists(unittest.TestCase):
                 self.assertTrue(row["english"], word)
 
     def test_a_word_is_in_only_one_level(self):
-        self.assertFalse(load_words("A1").keys() & load_words("A2").keys())
+        levels = list(WORD_FILES)
+        for i, a in enumerate(levels):
+            for b in levels[i + 1:]:
+                self.assertFalse(load_words(a).keys() & load_words(b).keys(), f"{a} and {b} share words")
+
+    def test_every_level_has_a_word_list_and_scenarios(self):
+        for level in ("A1", "A2", "B1"):
+            self.assertIn(level, WORD_FILES)
+            self.assertGreaterEqual(len(load_words(level)), 100, level)
+            self.assertTrue(SCENARIOS[level], level)
 
     def test_scenarios_only_use_known_words(self):
         words = load_words()
