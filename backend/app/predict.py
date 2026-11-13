@@ -1,6 +1,7 @@
+from app.lesson_engine import MODEL_FILE
 from app.model import load_networks, het_probability
 
-networks, vocab = load_networks("/app/data/dehet_model.pt")
+networks, vocab = load_networks(MODEL_FILE)
 
 def predict(word):
     p = het_probability(networks, vocab, word)

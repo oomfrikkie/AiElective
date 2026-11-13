@@ -2,8 +2,10 @@ import json
 import csv
 import re
 
-JSONL_FILE = "/app/data/dutchDictionary.json"
-OUT_FILE = "/app/data/dehet_data.csv"
+from app.lesson_engine import DATA_DIR
+
+JSONL_FILE = DATA_DIR / "dutchDictionary.json"
+OUT_FILE = DATA_DIR / "dehet_data.csv"
 SKIP_ENGLISH_LOANS = True
 
 

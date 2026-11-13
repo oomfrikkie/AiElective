@@ -4,18 +4,19 @@ import random
 import torch
 import torch.nn as nn
 from app.model import DeHetNet, encode
+from app.lesson_engine import DATA_DIR, MODEL_FILE, WORD_FILES
 
 random.seed(42)
 
 # ---------- 1. Load the data ----------
-with open("/app/data/dehet_data.csv", encoding="utf-8") as f:
+with open(DATA_DIR / "dehet_data.csv", encoding="utf-8") as f:
     data = [(r["word"], int(r["label"])) for r in csv.DictReader(f)]
 
 # the lesson words stay hidden, so "follows a pattern" means the spelling gave it away,
 # not that the network has seen the answer
 lesson_words = {}
-for level in ("A1", "A2"):
-    with open(f"/app/data/words{level}.csv", encoding="utf-8") as f:
+for level, path in WORD_FILES.items():
+    with open(path, encoding="utf-8") as f:
         lesson_words[level] = [(r["word"], int(r["article"] == "het")) for r in csv.DictReader(f)]
 hidden = {w for words in lesson_words.values() for w, _ in words}
 data = [(w, l) for w, l in data if w not in hidden]
@@ -100,5 +101,5 @@ for level, words in lesson_words.items():
     report(f"{level} lesson words (never trained on)", *to_tensors(words))
 
 # ---------- 5. Save ----------
-torch.save({"states": [net.state_dict() for net in networks], "vocab": vocab}, "/app/data/dehet_model.pt")
-print("\nSaved to /app/data/dehet_model.pt")
+torch.save({"states": [net.state_dict() for net in networks], "vocab": vocab}, MODEL_FILE)
+print(f"\nSaved to {MODEL_FILE}")

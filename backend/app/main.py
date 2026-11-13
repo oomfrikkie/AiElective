@@ -1,15 +1,17 @@
 import os
 import traceback
-from datetime import datetime
 from typing import List, Optional
 
 from fastapi import FastAPI, HTTPException, Response
 from fastapi.middleware.cors import CORSMiddleware
+from dotenv import load_dotenv
 from pydantic import BaseModel
 
+load_dotenv()  # before the app modules: they read GEMINI_* settings when imported
+
 from app.lesson_engine import (
-    WORD_FILES, load_words, load_history, save_history, level_lessons,
-    build_lesson, compare, ai_hint, gemini_tips,
+    WORD_FILES, load_words, level_lessons, build_lesson, compare, ai_hint, gemini_tips,
+    model_available, predict_article,
 )
 from app.conversation import (
     LEVELS, SCENARIOS, list_scenarios, get_scenario,
@@ -17,47 +19,71 @@ from app.conversation import (
     speak, TTS_VOICES,
 )
 
-app = FastAPI(title="AIElective API")
+# The AI service. It holds no user data: the NestJS API (api/) owns accounts and lesson
+# history, and sends a learner's history along when it asks for a lesson or a grade.
+app = FastAPI(title="HettieAI - AI service")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=[o.strip() for o in os.getenv("CORS_ORIGINS", "http://localhost:5173").split(",") if o.strip()],
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Single-user in-memory lesson state
-_current_lesson = None
-
 
 @app.get("/health")
 def health():
-    return {"status": "ok"}
-
-
-# ── Lesson ──────────────────────────────────────────────
-
-@app.get("/lesson/new")
-def new_lesson(level: str = "A1"):
-    global _current_lesson
-    if level not in WORD_FILES:
-        raise HTTPException(status_code=404, detail=f"Unknown level '{level}'.")
-    words = load_words(level)
-    history = load_history()
-    groups, last_wrong = build_lesson(words, history, level)
-
-    _current_lesson = {
-        "level": level,
-        "words": words,
-        "groups": groups,
-        "last_wrong": last_wrong,
-        "lesson_number": len(level_lessons(history, level)) + 1,
+    return {
+        "status": "ok",
+        "gemini_key": bool(os.getenv("GEMINI_API_KEY")),
+        "dehet_model": model_available(),
+        "levels": list(WORD_FILES),
     }
 
+
+# ── Lesson (de/het) ─────────────────────────────────────
+
+class LessonResult(BaseModel):
+    word: str
+    guess: str
+    correct: bool
+
+
+class PastLesson(BaseModel):
+    level: str = "A1"
+    results: List[LessonResult]
+
+
+class BuildRequest(BaseModel):
+    level: str = "A1"
+    history: List[PastLesson] = []  # this learner's earlier lessons, oldest first
+
+
+def _history(lessons):
+    return {"lessons": [lesson.model_dump() for lesson in lessons]}
+
+
+def _check_level(level):
+    if level not in WORD_FILES:
+        raise HTTPException(status_code=404, detail=f"Unknown level '{level}'.")
+
+
+@app.get("/lesson/levels")
+def lesson_levels():
+    return {"levels": list(WORD_FILES)}
+
+
+@app.post("/lesson/build")
+def build(body: BuildRequest):
+    _check_level(body.level)
+    words = load_words(body.level)
+    history = _history(body.history)
+    groups, last_wrong = build_lesson(words, history, body.level)
     return {
-        "level": level,
+        "level": body.level,
         "levels": list(WORD_FILES),
-        "lesson_number": _current_lesson["lesson_number"],
+        "lesson_number": len(level_lessons(history, body.level)) + 1,
+        "last_wrong": last_wrong,
         "last_wrong_count": len(last_wrong),
         "groups": [
             [{"word": w, "english": words[w]["english"]} for w in group]
@@ -71,40 +97,37 @@ class Answer(BaseModel):
     guess: str
 
 
-class SubmitRequest(BaseModel):
+class GradeRequest(BaseModel):
+    level: str = "A1"
     answers: List[Answer]
+    last_wrong: List[str] = []
+    history: List[PastLesson] = []  # earlier lessons, NOT including this one
 
 
-@app.post("/lesson/submit")
-def submit_lesson(body: SubmitRequest):
-    global _current_lesson
-    if _current_lesson is None:
-        raise HTTPException(status_code=400, detail="No active lesson. Call /lesson/new first.")
+@app.post("/lesson/grade")
+def grade(body: GradeRequest):
+    _check_level(body.level)
+    words = load_words(body.level)
+    unknown = [a.word for a in body.answers if a.word not in words]
+    if unknown:
+        raise HTTPException(status_code=400, detail=f"Not {body.level} words: {', '.join(unknown)}")
 
-    level = _current_lesson["level"]
-    words = _current_lesson["words"]
-    last_wrong = _current_lesson["last_wrong"]
-
+    # The right answer always comes from the word list, never from the client.
     results = [
         {"word": a.word, "guess": a.guess, "correct": a.guess == words[a.word]["article"]}
         for a in body.answers
     ]
-
-    history = load_history()
-    report = compare(history, results, last_wrong, level)
+    report = compare(_history(body.history), results, body.last_wrong, body.level)
 
     mistakes = [
         {**words[r["word"]], "guess": r["guess"], **ai_hint(r["word"], words[r["word"]]["article"])}
         for r in results if not r["correct"]
     ]
-
     tips = gemini_tips(mistakes)
 
-    history["lessons"].append({"date": datetime.now().isoformat(), "level": level, "results": results})
-    save_history(history)
-    _current_lesson = None
-
     return {
+        "level": body.level,
+        "results": results,
         "score": report["score"],
         "total": report["total"],
         "previous": report["previous"],
@@ -121,6 +144,25 @@ def submit_lesson(body: SubmitRequest):
             }
             for m in mistakes
         ],
+    }
+
+
+@app.get("/predict")
+def predict(word: str):
+    """Ask the neural network directly: 'de or het?' for any Dutch noun."""
+    word = word.strip().lower()
+    if not word.isalpha():
+        raise HTTPException(status_code=400, detail="Give a single word, letters only.")
+    guess = predict_article(word)
+    if guess is None:
+        raise HTTPException(status_code=503, detail="The de/het model is not trained yet.")
+    article, confidence = guess
+    known = load_words().get(word)
+    return {
+        "word": word,
+        "article": article,
+        "confidence": round(confidence, 3),
+        "known_article": known["article"] if known else None,
     }
 
 

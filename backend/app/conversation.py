@@ -317,8 +317,14 @@ def gemini_client():
         from dotenv import load_dotenv
         from google import genai
 
+        from google.genai import types
+
         load_dotenv()
-        _client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
+        # v1beta: newer SDK versions default to v1, which rejects speech_config (TTS breaks).
+        _client = genai.Client(
+            api_key=os.getenv("GEMINI_API_KEY"),
+            http_options=types.HttpOptions(api_version="v1beta"),
+        )
     return _client
 
 
@@ -609,10 +615,14 @@ def speak(text, voice, dutch_only=True):
             ),
         )
         part = response.candidates[0].content.parts[0].inline_data
-        # mime_type looks like "audio/L16;codec=pcm;rate=24000" (sometimes with "; channels=1")
-        found = re.search(r"rate=(\d+)", part.mime_type or "")
-        rate = int(found.group(1)) if found else 24000
+        mime = (part.mime_type or "").lower()
+        if "wav" in mime or part.data[:4] == b"RIFF":
+            audio = part.data  # some TTS models already return a complete WAV file
+        else:
+            # raw PCM, mime_type like "audio/L16;codec=pcm;rate=24000" (sometimes with "; channels=1")
+            found = re.search(r"rate=(\d+)", mime)
+            audio = _wav(part.data, int(found.group(1)) if found else 24000)
         if len(_tts_cache) > 200:
             _tts_cache.clear()
-        _tts_cache[key] = _wav(part.data, rate)
+        _tts_cache[key] = audio
     return _tts_cache[key]

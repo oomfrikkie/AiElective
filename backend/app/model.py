@@ -29,7 +29,7 @@ class DeHetNet(nn.Module):
 
 def load_networks(path):
     """Load all the trained networks. They vote together, see het_probability."""
-    saved = torch.load(path)
+    saved = torch.load(path, map_location="cpu")
     vocab = saved["vocab"]
     networks = []
     for state in saved["states"]:

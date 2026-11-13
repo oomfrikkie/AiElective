@@ -1,4 +1,4 @@
-"""Run with: docker compose run --rm -v ./backend/tests:/app/tests backend python -m unittest discover tests"""
+"""Run with: docker compose run --rm backend python -m unittest discover tests  (or locally: cd backend && python -m unittest discover tests)"""
 import unittest
 
 from app.conversation import SCENARIOS

@@ -3,15 +3,21 @@ import json
 import os
 import random
 import re
-from datetime import datetime
+from pathlib import Path
 
-WORD_FILES = {"A1": "/app/data/wordsA1.csv", "A2": "/app/data/wordsA2.csv"}
-HISTORY_FILE = "/app/data/history.json"
+# backend/data locally, /app/data in Docker. Override with DATA_DIR if needed.
+DATA_DIR = Path(os.getenv("DATA_DIR", Path(__file__).resolve().parent.parent / "data"))
+LEVELS = ("A1", "A2", "B1")
+WORD_FILES = {lvl: DATA_DIR / f"words{lvl}.csv" for lvl in LEVELS if (DATA_DIR / f"words{lvl}.csv").exists()}
+MODEL_FILE = DATA_DIR / "dehet_model.pt"
+HISTORY_FILE = DATA_DIR / "history.json"  # only used by the command-line game (play.py)
 LESSON_SIZE = 12
 GROUP_SIZE = 4
 
 
 # ---------- Words + history ----------
+# The web app keeps every learner's history in the NestJS API (Postgres) and sends it along
+# with each request. history.json is only for the offline command-line game.
 def load_words(level=None):
     """The words of one level, or of all levels when no level is given."""
     words = {}
@@ -83,15 +89,45 @@ def compare(history, results, last_wrong, level="A1"):
 # ---------- AI 1: your neural network ----------
 _networks = None
 _vocab = None
+_model_missing = False
 PATTERN_CONF = 0.9          # 97-98% reliable on words the network never saw
 STRONG_PATTERN_CONF = 0.98  # 98-99% reliable
 
-def ai_hint(word, real_article):
-    global _networks, _vocab
-    from app.model import load_networks, het_probability
+def model_available():
+    return MODEL_FILE.exists()
 
-    if _networks is None:
-        _networks, _vocab = load_networks("/app/data/dehet_model.pt")
+
+def _load_model():
+    """Load the networks once. Returns False if there is no trained model (yet)."""
+    global _networks, _vocab, _model_missing
+    if _networks is None and not _model_missing:
+        if not model_available():
+            _model_missing = True
+            print(f"(No trained de/het model at {MODEL_FILE}: run prepare_data.py and train.py)", flush=True)
+        else:
+            from app.model import load_networks
+            _networks, _vocab = load_networks(MODEL_FILE)
+    return _networks is not None
+
+
+def predict_article(word):
+    """The network's own guess for any noun: (article, confidence), or None without a model."""
+    from app.model import het_probability
+
+    if not _load_model():
+        return None
+    p = het_probability(_networks, _vocab, word)
+    return ("het", p) if p > 0.5 else ("de", 1 - p)
+
+
+def ai_hint(word, real_article):
+    if not _load_model():
+        # Without the network there is no pattern verdict, but 'de' is still the safe default.
+        if real_article == "de":
+            return {"verdict": "default", "hint": "'de' is the safe default: about 3 in 4 nouns take it"}
+        return {"verdict": "memorize", "hint": "No rule for this one, just memorize it"}
+
+    from app.model import het_probability
 
     p = het_probability(_networks, _vocab, word)
     guess = "het" if p > 0.5 else "de"
