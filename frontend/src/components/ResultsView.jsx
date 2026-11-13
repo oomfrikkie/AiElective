@@ -1,5 +1,5 @@
 export default function ResultsView({ results, onNext }) {
-  const { score, total, previous, fixed, still_wrong, mistakes } = results
+  const { score, total, previous, fixed, stillWrong, mistakes } = results
   const diff = previous !== null ? score - previous : null
   const perfect = mistakes.length === 0
 
@@ -18,10 +18,10 @@ export default function ResultsView({ results, onNext }) {
         )}
       </div>
 
-      {(fixed.length > 0 || still_wrong.length > 0) && (
+      {(fixed.length > 0 || stillWrong.length > 0) && (
         <div className="tags">
           {fixed.map(w => <span key={w} className="tag green">✓ {w}</span>)}
-          {still_wrong.map(w => <span key={w} className="tag orange">↻ {w}</span>)}
+          {stillWrong.map(w => <span key={w} className="tag orange">↻ {w}</span>)}
         </div>
       )}
 
@@ -39,11 +39,11 @@ export default function ResultsView({ results, onNext }) {
                 {m.article} {m.word}
                 <span>({m.english}) · you guessed {m.guess}</span>
               </div>
-              {m.ai_hint && (
-                <p className="hint-line">Pattern AI: {m.ai_hint}</p>
+              {m.aiHint && (
+                <p className="hint-line">Pattern AI: {m.aiHint}</p>
               )}
-              {m.teacher_tip && (
-                <p className="hint-line">Teacher: {m.teacher_tip}</p>
+              {m.teacherTip && (
+                <p className="hint-line">Teacher: {m.teacherTip}</p>
               )}
             </div>
           ))}

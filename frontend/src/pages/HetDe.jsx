@@ -1,27 +1,57 @@
 import { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import LessonView from '../components/LessonView'
 import ResultsView from '../components/ResultsView'
-import { fetchNewLesson, submitLesson } from '../api'
+import { startLesson, submitLesson } from '../userApi'
+import { useAuth, useSetting } from '../auth/AuthContext'
 
 export default function HetDe() {
+  const { user, checking } = useAuth()
+
+  if (checking) return <p className="status">Loading...</p>
+  if (!user) return <LoginPrompt />
+  return <Lessons key={user.id} />
+}
+
+// Lessons are saved per learner (mistakes come back, progress is tracked), so they need an account.
+function LoginPrompt() {
+  return (
+    <div>
+      <div className="header">
+        <h1>De or het?</h1>
+      </div>
+      <div className="card prompt-card">
+        <p>Log in to start your de/het lessons.</p>
+        <p className="muted">
+          Your answers are saved to your account, so the words you get wrong come back next
+          time and you can follow your progress on any device.
+        </p>
+        <Link to="/account" className="btn">Log in or sign up</Link>
+      </div>
+    </div>
+  )
+}
+
+function Lessons() {
   const [lesson, setLesson] = useState(null)
   const [results, setResults] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-  const [level, setLevel] = useState('A1')
+  const [level, setLevel] = useSetting('lessonLevel', 'hettie-lesson-level', 'A1')
 
-  useEffect(() => { startLesson() }, [level])
+  useEffect(() => { begin() }, [level])
 
-  async function startLesson() {
+  async function begin() {
     setLoading(true)
     setError(null)
     setResults(null)
     setLesson(null)
     try {
-      const data = await fetchNewLesson(level)
-      setLesson(data)
-    } catch {
-      setError('Could not connect to the backend.')
+      setLesson(await startLesson(level))
+    } catch (e) {
+      // A level that no longer exists (e.g. saved from elsewhere): fall back to A1.
+      if (e.status === 404 && level !== 'A1') return setLevel('A1')
+      setError(e.message || 'Could not load a lesson.')
     } finally {
       setLoading(false)
     }
@@ -29,20 +59,27 @@ export default function HetDe() {
 
   async function handleSubmit(answers) {
     setLoading(true)
+    setError(null)
     try {
-      const data = await submitLesson(answers)
-      setResults(data)
-    } catch {
-      setError('Failed to submit answers.')
+      setResults(await submitLesson(lesson.id, answers))
+    } catch (e) {
+      setError(e.message || 'Failed to submit answers.')
     } finally {
       setLoading(false)
     }
   }
 
   if (loading && !lesson && !results) return <p className="status">Loading lesson...</p>
-  if (error) return <p className="error">{error}</p>
+  if (error && !lesson) {
+    return (
+      <div className="card prompt-card">
+        <p className="error">{error}</p>
+        <button className="btn" onClick={begin}>Try again</button>
+      </div>
+    )
+  }
 
-  if (results) return <ResultsView results={results} onNext={startLesson} />
+  if (results) return <ResultsView results={results} onNext={begin} />
   return (
     <>
       <div className="level-tabs">
@@ -56,7 +93,8 @@ export default function HetDe() {
           </button>
         ))}
       </div>
-      <LessonView lesson={lesson} onSubmit={handleSubmit} loading={loading} />
+      <LessonView key={lesson.id} lesson={lesson} onSubmit={handleSubmit} loading={loading} />
+      {error && <p className="error">{error}</p>}
     </>
   )
 }

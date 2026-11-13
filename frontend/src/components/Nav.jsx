@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { NavLink } from 'react-router-dom'
+import { useAuth } from '../auth/AuthContext'
 
 const links = [
   { to: '/',            label: 'Home' },
@@ -10,11 +11,13 @@ const links = [
 
 export default function Nav() {
   const [open, setOpen] = useState(false)
+  const { user } = useAuth()
 
   return (
     <>
       <nav className="navbar">
         <span className="nav-brand">HettieAI</span>
+        <NavLink to="/account" className="nav-user">{user ? user.displayName : 'Log in'}</NavLink>
         <button className="hamburger" onClick={() => setOpen(o => !o)} aria-label="Menu">
           <span /><span /><span />
         </button>

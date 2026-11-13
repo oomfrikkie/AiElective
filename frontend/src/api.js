@@ -1,4 +1,5 @@
-const BASE = import.meta.env.VITE_API_URL
+// The Python AI service (chat, speech, conversation practice).
+const BASE = (import.meta.env.VITE_API_URL || 'http://localhost:8000').replace(/\/$/, '')
 
 export async function fetchNewLesson(level = 'A1') {
   const res = await fetch(`${BASE}/lesson/new?level=${level}`)

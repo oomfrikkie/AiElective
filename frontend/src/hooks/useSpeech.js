@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { fetchSpeech, fetchVoices } from '../api'
+import { useSetting } from '../auth/AuthContext'
 
-const KEY = 'hettie-voice'
 const FADE = 0.04 // seconds of fade in/out, avoids clicks
 
 // One audio engine for the whole app that stays open between replies. Opening and closing
@@ -23,9 +23,8 @@ function clean(text) {
 // dutchOnly: false lets the voice switch between English and Dutch by itself (tutor chat).
 export default function useSpeech({ dutchOnly = true } = {}) {
   const [voices, setVoices] = useState([])
-  const [voice, setVoiceState] = useState(() => {
-    try { return localStorage.getItem(KEY) || 'Kore' } catch { return 'Kore' }
-  })
+  // Saved in the account when logged in, otherwise in this browser.
+  const [voice, setVoiceState] = useSetting('voice', 'hettie-voice', 'Kore')
   const playing = useRef(null)
   const cache = useRef(new Map())
   const latest = useRef(0)
@@ -94,7 +93,6 @@ export default function useSpeech({ dutchOnly = true } = {}) {
     // Switch voice and play a short sample with it.
     setVoice: name => {
       setVoiceState(name)
-      try { localStorage.setItem(KEY, name) } catch { /* storage unavailable */ }
       play('Hallo! Ik ben Hettie.', name)
     },
   }

@@ -3,13 +3,25 @@ import { fetchScenarios, sendConversationTurn, transcribeAudio } from '../api'
 import ModeSwitch, { useMode, VoicePicker } from '../components/ModeSwitch'
 import MicButton from '../components/MicButton'
 import useSpeech from '../hooks/useSpeech'
+import { useAuth, useSetting } from '../auth/AuthContext'
+import { fetchCompletionSummary, saveCompletion } from '../userApi'
 
 export default function Conversation() {
-  const [level, setLevel] = useState('A1')
+  const { user } = useAuth()
+  const [level, setLevel] = useSetting('conversationLevel', 'hettie-conversation-level', 'A1')
   const [levels, setLevels] = useState([])
   const [scenarios, setScenarios] = useState([])
   const [scenario, setScenario] = useState(null)
   const [error, setError] = useState(null)
+  const [completed, setCompleted] = useState(new Set())
+
+  // Which scenarios this learner already finished (only with an account).
+  useEffect(() => {
+    if (!user || scenario) return
+    fetchCompletionSummary()
+      .then(rows => setCompleted(new Set(rows.map(r => `${r.level}-${r.scenarioId}`))))
+      .catch(() => {})
+  }, [user, scenario])
 
   useEffect(() => {
     setError(null)
@@ -44,7 +56,10 @@ export default function Conversation() {
       <div className="scenario-grid">
         {scenarios.map(s => (
           <button key={s.id} className="card scenario-card" onClick={() => setScenario(s)}>
-            <div className="scenario-title">{s.title}</div>
+            <div className="scenario-title">
+              {s.title}
+              {completed.has(`${level}-${s.id}`) && <span className="tag green done-tag">✓ Done</span>}
+            </div>
             <div className="scenario-sub">{s.title_en}</div>
             <p className="scenario-desc">{s.description}</p>
           </button>
@@ -55,6 +70,7 @@ export default function Conversation() {
 }
 
 function ConversationChat({ level, scenario, onBack }) {
+  const { user } = useAuth()
   const [messages, setMessages] = useState([])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
@@ -67,6 +83,7 @@ function ConversationChat({ level, scenario, onBack }) {
   // Bumped on every (re)start and when leaving, so replies to an old start are ignored.
   // React's development mode runs the start-up effect twice, which otherwise shows two greetings.
   const session = useRef(0)
+  const saved = useRef(false)
 
   useEffect(() => {
     start()
@@ -102,6 +119,7 @@ function ConversationChat({ level, scenario, onBack }) {
       ])
       setDone(turn.goal_complete)
       setGoalReached(turn.goal_reached)
+      if (turn.goal_complete) recordCompletion(history, turn)
       if (mode === 'voice') speak(turn.dutch)
     } catch {
       if (id !== session.current) return
@@ -114,8 +132,25 @@ function ConversationChat({ level, scenario, onBack }) {
     }
   }
 
+  // Saved once per run to the learner's account, with how many messages it took.
+  function recordCompletion(history, lastTurn) {
+    if (!user || saved.current) return
+    saved.current = true
+    const answers = history.filter(m => m.role === 'user')
+    const corrections = answers.filter(m => m.feedback && /^(You said|Better|That wasn't Dutch)/.test(m.feedback)).length
+      + (/^(You said|Better|That wasn't Dutch)/.test(lastTurn.feedback || '') ? 1 : 0)
+    saveCompletion({
+      level,
+      scenarioId: scenario.id,
+      scenarioTitle: scenario.title,
+      turns: Math.max(1, answers.length),
+      corrections,
+    }).catch(() => { saved.current = false })
+  }
+
   function start() {
     session.current++
+    saved.current = false
     stop()
     setDone(false)
     setGoalReached(false)
@@ -205,6 +240,7 @@ function ConversationChat({ level, scenario, onBack }) {
         {done && (
           <div className="convo-done">
             Goed gedaan! You completed this conversation.
+            {!user && <div className="small muted">Log in on the Account page to keep track of the scenarios you finish.</div>}
             <div>
               <button className="btn" onClick={start}>Try again</button>{' '}
               <button className="btn" onClick={onBack}>Next scenario</button>

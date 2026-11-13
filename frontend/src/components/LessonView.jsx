@@ -28,7 +28,7 @@ export default function LessonView({ lesson, onSubmit, loading }) {
     <div>
       <div className="header">
         <h1>De or het?</h1>
-        <span className="header-sub">Lesson {lesson.lesson_number}</span>
+        <span className="header-sub">Lesson {lesson.lessonNumber}</span>
       </div>
 
       <div className="progress">
@@ -59,9 +59,9 @@ export default function LessonView({ lesson, onSubmit, loading }) {
         ))}
       </div>
 
-      {lesson.last_wrong_count > 0 && roundIndex === 0 && (
+      {lesson.lastWrongCount > 0 && roundIndex === 0 && (
         <p style={{ fontSize: '0.85rem', color: '#888', marginBottom: '0.5rem' }}>
-          {lesson.last_wrong_count} words from last time are included.
+          {lesson.lastWrongCount} words from last time are included.
         </p>
       )}
 

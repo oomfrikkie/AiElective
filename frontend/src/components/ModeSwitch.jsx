@@ -1,19 +1,8 @@
-import { useState } from 'react'
+import { useSetting } from '../auth/AuthContext'
 
-const KEY = 'hettie-mode'
-
-// Text / Voice mode, remembered across pages and visits.
+// Text / Voice mode, remembered across pages and visits (in the account when logged in).
 export function useMode() {
-  const [mode, setModeState] = useState(() => {
-    try { return localStorage.getItem(KEY) || 'text' } catch { return 'text' }
-  })
-
-  function setMode(m) {
-    setModeState(m)
-    try { localStorage.setItem(KEY, m) } catch { /* storage unavailable */ }
-  }
-
-  return [mode, setMode]
+  return useSetting('mode', 'hettie-mode', 'text')
 }
 
 export default function ModeSwitch({ mode, onChange }) {
