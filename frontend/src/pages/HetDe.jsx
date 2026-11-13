@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import LessonView from '../components/LessonView'
 import ResultsView from '../components/ResultsView'
@@ -38,22 +38,27 @@ function Lessons() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [level, setLevel] = useSetting('lessonLevel', 'hettie-lesson-level', 'A1')
+  // Only the newest request may update the page (fast level switching, React dev mode).
+  const latest = useRef(0)
 
   useEffect(() => { begin() }, [level])
 
   async function begin() {
+    const id = ++latest.current
     setLoading(true)
     setError(null)
     setResults(null)
     setLesson(null)
     try {
-      setLesson(await startLesson(level))
+      const lesson = await startLesson(level)
+      if (id === latest.current) setLesson(lesson)
     } catch (e) {
+      if (id !== latest.current) return
       // A level that no longer exists (e.g. saved from elsewhere): fall back to A1.
       if (e.status === 404 && level !== 'A1') return setLevel('A1')
       setError(e.message || 'Could not load a lesson.')
     } finally {
-      setLoading(false)
+      if (id === latest.current) setLoading(false)
     }
   }
 

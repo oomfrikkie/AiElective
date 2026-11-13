@@ -207,6 +207,25 @@ describe('HettieAI API (e2e)', () => {
       expect(stats.body.trickyWords[0]).toMatchObject({ word: 'huis', article: 'het', wrong: 2 });
     });
 
+    it('resumes an open lesson instead of starting a second one', async () => {
+      const auth = { Authorization: `Bearer ${await tokenFor('resume@example.com')}` };
+      const [a, b] = await Promise.all([
+        http.post('/lessons').set(auth).send({ level: 'A1' }),
+        http.post('/lessons').set(auth).send({ level: 'A1' }),
+      ]);
+      // Even two starts at the same moment leave a lesson that can be submitted...
+      await http.post(`/lessons/${b.body.id}/submit`).set(auth)
+        .send({ answers: answersFor(b.body.groups, () => true) }).expect(200);
+      // ...and afterwards no stale open lesson is left over.
+      const next = await http.post('/lessons').set(auth).send({ level: 'A1' }).expect(201);
+      expect(next.body.lessonNumber).toBe(2);
+      expect([a.body.id, b.body.id]).not.toContain(next.body.id);
+
+      // A refresh mid-lesson gets the same lesson back.
+      const again = await http.post('/lessons').set(auth).send({ level: 'A1' }).expect(201);
+      expect(again.body.id).toBe(next.body.id);
+    });
+
     it('rejects answers that do not match the lesson', async () => {
       const token = await tokenFor('cheat@example.com');
       const auth = { Authorization: `Bearer ${token}` };

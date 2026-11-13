@@ -37,11 +37,18 @@ export class LessonsService {
       }));
   }
 
+  /**
+   * The learner's open lesson for this level, or a new one. Resuming (instead of replacing)
+   * keeps a refresh from reshuffling the words, and makes two quick starts harmless.
+   */
   async start(userId: string, level: string) {
-    const built = await this.ai.buildLesson(level, await this.history(userId, level));
+    const open = await this.lessons.findOne({
+      where: { userId, level, status: 'in_progress' },
+      order: { createdAt: 'DESC' },
+    });
+    if (open) return this.toStarted(open, (await this.ai.levels()).levels);
 
-    // Only one open lesson per level: starting again replaces an unfinished one.
-    await this.lessons.delete({ userId, level, status: 'in_progress' });
+    const built = await this.ai.buildLesson(level, await this.history(userId, level));
     const lesson = await this.lessons.save(
       this.lessons.create({
         userId,
@@ -53,11 +60,14 @@ export class LessonsService {
         total: built.groups.flat().length,
       }),
     );
+    return this.toStarted(lesson, built.levels);
+  }
 
+  private toStarted(lesson: Lesson, levels: string[]) {
     return {
       id: lesson.id,
-      level,
-      levels: built.levels,
+      level: lesson.level,
+      levels,
       lessonNumber: lesson.lessonNumber,
       lastWrongCount: lesson.lastWrong.length,
       groups: lesson.groups,
@@ -100,6 +110,8 @@ export class LessonsService {
         { status: 'completed', score: graded.score, completedAt: new Date(), mistakes },
       );
       if (affected !== 1) throw new ConflictException('This lesson is already submitted');
+      // Any other open lesson in this level (e.g. from two starts at once) is now outdated.
+      await tx.delete(Lesson, { userId, level: lesson.level, status: 'in_progress' });
       await tx.insert(
         LessonAnswer,
         graded.results.map((r) => ({
