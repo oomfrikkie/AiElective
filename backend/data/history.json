@@ -209,6 +209,723 @@
           "correct": true
         }
       ]
+    },
+    {
+      "date": "2026-10-08T22:54:03.667477",
+      "results": [
+        {
+          "word": "stad",
+          "guess": "het",
+          "correct": false
+        },
+        {
+          "word": "krant",
+          "guess": "het",
+          "correct": false
+        },
+        {
+          "word": "tuin",
+          "guess": "de",
+          "correct": true
+        },
+        {
+          "word": "ziekenhuis",
+          "guess": "het",
+          "correct": true
+        },
+        {
+          "word": "bos",
+          "guess": "de",
+          "correct": false
+        },
+        {
+          "word": "schoen",
+          "guess": "de",
+          "correct": true
+        },
+        {
+          "word": "boek",
+          "guess": "het",
+          "correct": true
+        },
+        {
+          "word": "tijd",
+          "guess": "het",
+          "correct": false
+        },
+        {
+          "word": "kopje",
+          "guess": "de",
+          "correct": false
+        },
+        {
+          "word": "mes",
+          "guess": "de",
+          "correct": false
+        },
+        {
+          "word": "probleem",
+          "guess": "het",
+          "correct": true
+        },
+        {
+          "word": "telefoon",
+          "guess": "het",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "date": "2026-10-08T22:54:38.797916",
+      "results": [
+        {
+          "word": "schaap",
+          "guess": "de",
+          "correct": false
+        },
+        {
+          "word": "krant",
+          "guess": "de",
+          "correct": true
+        },
+        {
+          "word": "tijd",
+          "guess": "de",
+          "correct": true
+        },
+        {
+          "word": "bos",
+          "guess": "de",
+          "correct": false
+        },
+        {
+          "word": "stad",
+          "guess": "de",
+          "correct": true
+        },
+        {
+          "word": "man",
+          "guess": "het",
+          "correct": false
+        },
+        {
+          "word": "kopje",
+          "guess": "het",
+          "correct": true
+        },
+        {
+          "word": "hart",
+          "guess": "de",
+          "correct": false
+        },
+        {
+          "word": "koffie",
+          "guess": "het",
+          "correct": false
+        },
+        {
+          "word": "mes",
+          "guess": "de",
+          "correct": false
+        },
+        {
+          "word": "telefoon",
+          "guess": "het",
+          "correct": false
+        },
+        {
+          "word": "museum",
+          "guess": "de",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "date": "2026-10-09T08:22:27.523652",
+      "results": [
+        {
+          "word": "hart",
+          "guess": "de",
+          "correct": false
+        },
+        {
+          "word": "bos",
+          "guess": "de",
+          "correct": false
+        },
+        {
+          "word": "cadeau",
+          "guess": "de",
+          "correct": false
+        },
+        {
+          "word": "man",
+          "guess": "de",
+          "correct": true
+        },
+        {
+          "word": "schaap",
+          "guess": "de",
+          "correct": false
+        },
+        {
+          "word": "hond",
+          "guess": "de",
+          "correct": true
+        },
+        {
+          "word": "uur",
+          "guess": "de",
+          "correct": false
+        },
+        {
+          "word": "mes",
+          "guess": "de",
+          "correct": false
+        },
+        {
+          "word": "koffie",
+          "guess": "de",
+          "correct": true
+        },
+        {
+          "word": "museum",
+          "guess": "de",
+          "correct": false
+        },
+        {
+          "word": "telefoon",
+          "guess": "het",
+          "correct": false
+        },
+        {
+          "word": "oog",
+          "guess": "het",
+          "correct": true
+        }
+      ]
+    },
+    {
+      "date": "2026-10-09T08:24:55.698669",
+      "results": [
+        {
+          "word": "schaap",
+          "guess": "de",
+          "correct": false
+        },
+        {
+          "word": "zon",
+          "guess": "de",
+          "correct": true
+        },
+        {
+          "word": "mes",
+          "guess": "het",
+          "correct": true
+        },
+        {
+          "word": "telefoon",
+          "guess": "het",
+          "correct": false
+        },
+        {
+          "word": "hart",
+          "guess": "de",
+          "correct": false
+        },
+        {
+          "word": "geld",
+          "guess": "de",
+          "correct": false
+        },
+        {
+          "word": "bos",
+          "guess": "de",
+          "correct": false
+        },
+        {
+          "word": "cadeau",
+          "guess": "het",
+          "correct": true
+        },
+        {
+          "word": "ijs",
+          "guess": "de",
+          "correct": false
+        },
+        {
+          "word": "idee",
+          "guess": "de",
+          "correct": false
+        },
+        {
+          "word": "museum",
+          "guess": "de",
+          "correct": false
+        },
+        {
+          "word": "uur",
+          "guess": "het",
+          "correct": true
+        }
+      ]
+    },
+    {
+      "date": "2026-10-09T09:41:56.374340",
+      "results": [
+        {
+          "word": "idee",
+          "guess": "de",
+          "correct": false
+        },
+        {
+          "word": "museum",
+          "guess": "de",
+          "correct": false
+        },
+        {
+          "word": "mond",
+          "guess": "het",
+          "correct": false
+        },
+        {
+          "word": "telefoon",
+          "guess": "het",
+          "correct": false
+        },
+        {
+          "word": "ijs",
+          "guess": "het",
+          "correct": true
+        },
+        {
+          "word": "bier",
+          "guess": "het",
+          "correct": true
+        },
+        {
+          "word": "vogel",
+          "guess": "de",
+          "correct": true
+        },
+        {
+          "word": "hart",
+          "guess": "het",
+          "correct": true
+        },
+        {
+          "word": "schaap",
+          "guess": "het",
+          "correct": true
+        },
+        {
+          "word": "geld",
+          "guess": "het",
+          "correct": true
+        },
+        {
+          "word": "soep",
+          "guess": "de",
+          "correct": true
+        },
+        {
+          "word": "bos",
+          "guess": "het",
+          "correct": true
+        }
+      ]
+    },
+    {
+      "date": "2026-10-30T07:57:48.143526",
+      "results": [
+        {
+          "word": "museum",
+          "guess": "de",
+          "correct": false
+        },
+        {
+          "word": "vork",
+          "guess": "het",
+          "correct": false
+        },
+        {
+          "word": "bloem",
+          "guess": "de",
+          "correct": true
+        },
+        {
+          "word": "idee",
+          "guess": "het",
+          "correct": true
+        },
+        {
+          "word": "lepel",
+          "guess": "het",
+          "correct": false
+        },
+        {
+          "word": "konijn",
+          "guess": "het",
+          "correct": true
+        },
+        {
+          "word": "mond",
+          "guess": "de",
+          "correct": true
+        },
+        {
+          "word": "telefoon",
+          "guess": "de",
+          "correct": true
+        },
+        {
+          "word": "dier",
+          "guess": "het",
+          "correct": true
+        },
+        {
+          "word": "kind",
+          "guess": "het",
+          "correct": true
+        },
+        {
+          "word": "broek",
+          "guess": "de",
+          "correct": true
+        },
+        {
+          "word": "melk",
+          "guess": "de",
+          "correct": true
+        }
+      ]
+    },
+    {
+      "date": "2026-10-30T08:33:30.276348",
+      "results": [
+        {
+          "word": "thee",
+          "guess": "de",
+          "correct": true
+        },
+        {
+          "word": "vork",
+          "guess": "het",
+          "correct": false
+        },
+        {
+          "word": "museum",
+          "guess": "de",
+          "correct": false
+        },
+        {
+          "word": "week",
+          "guess": "het",
+          "correct": false
+        },
+        {
+          "word": "stoel",
+          "guess": "het",
+          "correct": false
+        },
+        {
+          "word": "fiets",
+          "guess": "de",
+          "correct": true
+        },
+        {
+          "word": "jaar",
+          "guess": "het",
+          "correct": true
+        },
+        {
+          "word": "lepel",
+          "guess": "de",
+          "correct": true
+        },
+        {
+          "word": "auto",
+          "guess": "de",
+          "correct": true
+        },
+        {
+          "word": "lamp",
+          "guess": "het",
+          "correct": false
+        },
+        {
+          "word": "dorp",
+          "guess": "het",
+          "correct": true
+        },
+        {
+          "word": "minuut",
+          "guess": "de",
+          "correct": true
+        }
+      ]
+    },
+    {
+      "date": "2026-10-30T08:36:53.001850",
+      "results": [
+        {
+          "word": "lamp",
+          "guess": "de",
+          "correct": true
+        },
+        {
+          "word": "taal",
+          "guess": "het",
+          "correct": false
+        },
+        {
+          "word": "meisje",
+          "guess": "de",
+          "correct": false
+        },
+        {
+          "word": "tas",
+          "guess": "de",
+          "correct": true
+        },
+        {
+          "word": "straat",
+          "guess": "de",
+          "correct": true
+        },
+        {
+          "word": "land",
+          "guess": "het",
+          "correct": true
+        },
+        {
+          "word": "museum",
+          "guess": "de",
+          "correct": false
+        },
+        {
+          "word": "tafel",
+          "guess": "de",
+          "correct": true
+        },
+        {
+          "word": "vork",
+          "guess": "het",
+          "correct": false
+        },
+        {
+          "word": "week",
+          "guess": "het",
+          "correct": false
+        },
+        {
+          "word": "trein",
+          "guess": "het",
+          "correct": false
+        },
+        {
+          "word": "stoel",
+          "guess": "het",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "date": "2026-10-30T11:06:20.601978",
+      "results": [
+        {
+          "word": "museum",
+          "guess": "de",
+          "correct": false
+        },
+        {
+          "word": "keuken",
+          "guess": "het",
+          "correct": false
+        },
+        {
+          "word": "werk",
+          "guess": "de",
+          "correct": false
+        },
+        {
+          "word": "varken",
+          "guess": "de",
+          "correct": false
+        },
+        {
+          "word": "trein",
+          "guess": "de",
+          "correct": true
+        },
+        {
+          "word": "glas",
+          "guess": "het",
+          "correct": true
+        },
+        {
+          "word": "restaurant",
+          "guess": "het",
+          "correct": true
+        },
+        {
+          "word": "week",
+          "guess": "de",
+          "correct": true
+        },
+        {
+          "word": "vork",
+          "guess": "de",
+          "correct": true
+        },
+        {
+          "word": "stoel",
+          "guess": "het",
+          "correct": false
+        },
+        {
+          "word": "taal",
+          "guess": "de",
+          "correct": true
+        },
+        {
+          "word": "meisje",
+          "guess": "de",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "date": "2026-11-05T09:18:01.019183",
+      "level": "A1",
+      "results": [
+        {
+          "word": "dak",
+          "guess": "de",
+          "correct": false
+        },
+        {
+          "word": "nummer",
+          "guess": "het",
+          "correct": true
+        },
+        {
+          "word": "varken",
+          "guess": "de",
+          "correct": false
+        },
+        {
+          "word": "museum",
+          "guess": "de",
+          "correct": false
+        },
+        {
+          "word": "meisje",
+          "guess": "de",
+          "correct": false
+        },
+        {
+          "word": "vrouw",
+          "guess": "het",
+          "correct": false
+        },
+        {
+          "word": "bord",
+          "guess": "de",
+          "correct": false
+        },
+        {
+          "word": "stoel",
+          "guess": "het",
+          "correct": false
+        },
+        {
+          "word": "keuken",
+          "guess": "de",
+          "correct": true
+        },
+        {
+          "word": "bed",
+          "guess": "het",
+          "correct": true
+        },
+        {
+          "word": "werk",
+          "guess": "de",
+          "correct": false
+        },
+        {
+          "word": "kamer",
+          "guess": "het",
+          "correct": false
+        }
+      ]
+    },
+    {
+      "date": "2026-11-06T15:22:05.708943",
+      "level": "A1",
+      "results": [
+        {
+          "word": "zout",
+          "guess": "de",
+          "correct": false
+        },
+        {
+          "word": "meisje",
+          "guess": "het",
+          "correct": true
+        },
+        {
+          "word": "werk",
+          "guess": "de",
+          "correct": false
+        },
+        {
+          "word": "feest",
+          "guess": "het",
+          "correct": true
+        },
+        {
+          "word": "vrouw",
+          "guess": "het",
+          "correct": false
+        },
+        {
+          "word": "kamer",
+          "guess": "de",
+          "correct": true
+        },
+        {
+          "word": "dak",
+          "guess": "het",
+          "correct": true
+        },
+        {
+          "word": "stoel",
+          "guess": "de",
+          "correct": true
+        },
+        {
+          "word": "museum",
+          "guess": "de",
+          "correct": false
+        },
+        {
+          "word": "varken",
+          "guess": "de",
+          "correct": false
+        },
+        {
+          "word": "bord",
+          "guess": "de",
+          "correct": false
+        },
+        {
+          "word": "vader",
+          "guess": "de",
+          "correct": true
+        }
+      ]
     }
   ]
 }

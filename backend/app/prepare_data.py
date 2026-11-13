@@ -1,37 +1,44 @@
 import json
 import csv
+import re
 
-JSONL_FILE = "/app/data/dutchDictionary.jsonl"
+JSONL_FILE = "/app/data/dutchDictionary.json"
 OUT_FILE = "/app/data/dehet_data.csv"
 SKIP_ENGLISH_LOANS = True
 
 
 FUNCTION_POS = {"pron", "prep", "det", "article", "conj", "adv", "num", "particle", "intj"}
+COMMON_GENDERS = {"m", "f", "c", "mf", "mfbysense"}
+
+
+def pick_article(is_het, is_de):
+    if is_het and is_de:
+        return "both"
+    if is_het:
+        return "het"
+    if is_de:
+        return "de"
+    return None
 
 
 def get_article(entry):
-    # 1. Best source: the noun template, "n" = het, "m"/"f"/"c" = de
+    # 1. Best source: the noun template, "n" = het, "m"/"f"/"c" = de (can list several, e.g. "n,f,m")
     for t in entry.get("head_templates", []):
         if t.get("name") == "nl-noun":
-            g = t.get("args", {}).get("1", "")
-            if g == "n":
-                return "het"
-            if g in ("m", "f", "c", "m/f", "f/m"):
-                return "de"
+            genders = set(re.split(r"[,/]", t.get("args", {}).get("1", "")))
+            article = pick_article("n" in genders, bool(genders & COMMON_GENDERS))
+            if article:
+                return article
 
     # 2. Fallback: tags on the senses
     tags = set(entry.get("tags", []))
     for sense in entry.get("senses", []):
         tags.update(sense.get("tags", []))
 
-    is_het = "neuter" in tags
-    is_de = "masculine" in tags or "feminine" in tags or "common" in tags
-
-    if is_het and not is_de:
-        return "het"
-    if is_de and not is_het:
-        return "de"
-    return None
+    return pick_article(
+        "neuter" in tags,
+        "masculine" in tags or "feminine" in tags or "common" in tags,
+    )
 
 
 def is_english_loan(entry):
@@ -42,6 +49,7 @@ def is_english_loan(entry):
 
 
 nouns = {}             # word -> label
+ambiguous = set()
 function_words = set()
 
 with open(JSONL_FILE, encoding="utf-8") as f:
@@ -65,12 +73,19 @@ with open(JSONL_FILE, encoding="utf-8") as f:
             continue
         if SKIP_ENGLISH_LOANS and is_english_loan(entry):
             continue
-        if word in nouns:
-            continue
 
         article = get_article(entry)
-        if article:
-            nouns[word] = 1 if article == "het" else 0
+        if article == "both":
+            ambiguous.add(word)
+        elif article:
+            label = 1 if article == "het" else 0
+            if nouns.setdefault(word, label) != label:
+                ambiguous.add(word)
+
+# remove nouns that can take either article: spelling can't decide those (het raam / de raam)
+for word in ambiguous:
+    nouns.pop(word, None)
+print(f"Removed {len(ambiguous)} words with both articles")
 
 # remove nouns that are also grammar words (een, hij, van, niet...)
 rows = [(w, l) for w, l in nouns.items() if w not in function_words]

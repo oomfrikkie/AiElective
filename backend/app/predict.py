@@ -1,16 +1,9 @@
-import torch
-from app.model import DeHetNet, encode
+from app.model import load_networks, het_probability
 
-saved = torch.load("/app/data/dehet_model.pt")
-vocab = saved["vocab"]
-
-model = DeHetNet(len(vocab) + 2)
-model.load_state_dict(saved["state"])
-model.eval()
+networks, vocab = load_networks("/app/data/dehet_model.pt")
 
 def predict(word):
-    with torch.no_grad():
-        p = torch.sigmoid(model(torch.tensor([encode(word, vocab)]))).item()
+    p = het_probability(networks, vocab, word)
     article = "het" if p > 0.5 else "de"
     confidence = p if p > 0.5 else 1 - p
     return article, confidence

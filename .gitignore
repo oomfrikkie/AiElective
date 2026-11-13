@@ -8,6 +8,8 @@ __pycache__/
 
 # Data & model (large files)
 backend/data/dutchDictionary.jsonl
+backend/data/dutchDictionary.json
+backend/data/backups/
 backend/data/dehet_data.csv
 backend/data/dehet_model.pt
 

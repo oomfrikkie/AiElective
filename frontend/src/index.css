@@ -441,3 +441,278 @@ p {
 .chat-input-row .btn {
   margin-top: 0;
 }
+
+/* ── Conversation ── */
+.level-tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.level-tab {
+  padding: 0.35rem 0.9rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: #fff;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.level-tab.active {
+  background: #1a1a1a;
+  border-color: #1a1a1a;
+  color: #fff;
+  font-weight: 600;
+}
+
+.level-tab:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.level-tab span {
+  font-size: 0.75rem;
+  margin-left: 0.3rem;
+}
+
+.scenario-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1rem;
+}
+
+.scenario-card {
+  text-align: left;
+  font-family: inherit;
+  cursor: pointer;
+  margin-bottom: 0;
+  transition: border-color 0.1s;
+}
+
+.scenario-card:hover {
+  border-color: #1a1a1a;
+}
+
+.scenario-title {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.scenario-sub {
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: #999;
+}
+
+.scenario-desc {
+  font-size: 0.85rem;
+  color: #555;
+  margin-top: 0.5rem;
+}
+
+.convo-header {
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.convo-goal {
+  font-size: 0.85rem;
+  color: #555;
+  margin: 0.25rem 0;
+}
+
+.convo-help {
+  margin-top: 0.5rem;
+  max-height: 30vh;
+  overflow-y: auto;
+}
+
+.word-tag {
+  background: #f0f0f0;
+}
+
+.word-tag em,
+.phrase em {
+  font-style: normal;
+  color: #999;
+  margin-left: 0.3rem;
+}
+
+.phrase {
+  font-size: 0.85rem;
+  padding: 0.15rem 0;
+}
+
+.link-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  font-family: inherit;
+  font-size: 0.8rem;
+  color: #888;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.link-btn:hover {
+  color: #1a1a1a;
+}
+
+.translate-btn {
+  display: block;
+  margin-top: 0.3rem;
+}
+
+.translation {
+  font-size: 0.85rem;
+  color: #888;
+  margin-top: 0.2rem;
+}
+
+.feedback {
+  align-self: flex-end;
+  max-width: 80%;
+  font-size: 0.8rem;
+  color: #555;
+  padding-right: 0.75rem;
+  border-right: 2px solid #ddd;
+  text-align: right;
+  white-space: pre-wrap;
+}
+
+.convo-done {
+  align-self: center;
+  text-align: center;
+  font-size: 0.9rem;
+  padding: 1rem;
+}
+
+.convo-done .btn {
+  margin-top: 0.75rem;
+}
+
+/* ── Voice mode ── */
+.chat-topbar,
+.convo-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.chat-topbar {
+  justify-content: flex-end;
+}
+
+.mode-switch {
+  display: inline-flex;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.mode-option {
+  padding: 0.25rem 0.75rem;
+  border: none;
+  background: #fff;
+  font-family: inherit;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.mode-option.active {
+  background: #1a1a1a;
+  color: #fff;
+  font-weight: 600;
+}
+
+.mic-row {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.mic-btn {
+  width: 100%;
+  max-width: 320px;
+  padding: 0.75rem 1rem;
+  border: 1px solid #1a1a1a;
+  border-radius: 999px;
+  background: #1a1a1a;
+  color: #fff;
+  font-family: inherit;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+.mic-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.mic-btn.recording {
+  background: #cc3333;
+  border-color: #cc3333;
+  animation: mic-pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes mic-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(204, 51, 51, 0.4); }
+  50%      { box-shadow: 0 0 0 8px rgba(204, 51, 51, 0); }
+}
+
+.mic-error {
+  margin-top: 0;
+  font-size: 0.8rem;
+}
+
+.voice-hint {
+  font-size: 0.75rem;
+  color: #999;
+}
+
+.bubble-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 0.3rem;
+}
+
+.feedback.pronunciation {
+  border-right-color: #1a1a1a;
+}
+
+.mode-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.voice-picker {
+  max-width: 180px;
+  padding: 0.25rem 0.4rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: #fff;
+  font-family: inherit;
+  font-size: 0.8rem;
+}
+
+.live-text {
+  font-size: 0.85rem;
+  color: #555;
+  font-style: italic;
+  text-align: center;
+}
+
+.goal-hint {
+  font-size: 0.85rem;
+  color: #1e6e1e;
+  background: #e6f4e6;
+  border-radius: 4px;
+  padding: 0.4rem 0.75rem;
+  margin-bottom: 0.25rem;
+  text-align: center;
+}

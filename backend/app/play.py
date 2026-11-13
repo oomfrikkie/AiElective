@@ -4,7 +4,7 @@ from app.lesson_engine import (
     build_lesson, compare, ai_hint, gemini_tips,
 )
 
-words = load_words()
+words = load_words("A1")
 history = load_history()
 groups, last_wrong = build_lesson(words, history)
 
@@ -49,7 +49,7 @@ if report["still_wrong"]:
 
 # ---------- Mistakes, explained by both AIs ----------
 mistakes = [
-    {**words[r["word"]], "guess": r["guess"]}
+    {**words[r["word"]], "guess": r["guess"], **ai_hint(r["word"], words[r["word"]]["article"])}
     for r in results if not r["correct"]
 ]
 
@@ -58,7 +58,7 @@ if mistakes:
     tips = gemini_tips(mistakes)
     for m in mistakes:
         print(f"\n  {m['article']} {m['word']} ({m['english']})")
-        print(f"    Pattern AI: {ai_hint(m['word'], m['article'])}")
+        print(f"    Pattern AI: {m['hint']}")
         if m["word"] in tips:
             print(f"    Teacher:    {tips[m['word']]}")
     print("\nThese will come back next lesson.")

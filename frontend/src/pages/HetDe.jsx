@@ -8,8 +8,9 @@ export default function HetDe() {
   const [results, setResults] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [level, setLevel] = useState('A1')
 
-  useEffect(() => { startLesson() }, [])
+  useEffect(() => { startLesson() }, [level])
 
   async function startLesson() {
     setLoading(true)
@@ -17,7 +18,7 @@ export default function HetDe() {
     setResults(null)
     setLesson(null)
     try {
-      const data = await fetchNewLesson()
+      const data = await fetchNewLesson(level)
       setLesson(data)
     } catch {
       setError('Could not connect to the backend.')
@@ -42,5 +43,20 @@ export default function HetDe() {
   if (error) return <p className="error">{error}</p>
 
   if (results) return <ResultsView results={results} onNext={startLesson} />
-  return <LessonView lesson={lesson} onSubmit={handleSubmit} loading={loading} />
+  return (
+    <>
+      <div className="level-tabs">
+        {lesson.levels.map(l => (
+          <button
+            key={l}
+            className={`level-tab ${l === level ? 'active' : ''}`}
+            onClick={() => setLevel(l)}
+          >
+            {l}
+          </button>
+        ))}
+      </div>
+      <LessonView lesson={lesson} onSubmit={handleSubmit} loading={loading} />
+    </>
+  )
 }
