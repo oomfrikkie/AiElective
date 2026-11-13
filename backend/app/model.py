@@ -31,8 +31,12 @@ def load_networks(path):
     """Load all the trained networks. They vote together, see het_probability."""
     saved = torch.load(path, map_location="cpu")
     vocab = saved["vocab"]
+    # Older versions of train.py saved a single network under "state" (or "model").
+    states = saved.get("states") or [saved[k] for k in ("state", "model") if k in saved]
+    if not states:
+        raise ValueError(f"no trained networks in {path} (keys: {list(saved)})")
     networks = []
-    for state in saved["states"]:
+    for state in states:
         net = DeHetNet(len(vocab) + 2)
         net.load_state_dict(state)
         net.eval()

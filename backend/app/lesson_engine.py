@@ -94,19 +94,26 @@ PATTERN_CONF = 0.9          # 97-98% reliable on words the network never saw
 STRONG_PATTERN_CONF = 0.98  # 98-99% reliable
 
 def model_available():
-    return MODEL_FILE.exists()
+    """True if a trained model file exists AND loads."""
+    return _load_model()
 
 
 def _load_model():
     """Load the networks once. Returns False if there is no trained model (yet)."""
     global _networks, _vocab, _model_missing
     if _networks is None and not _model_missing:
-        if not model_available():
+        if not MODEL_FILE.exists():
             _model_missing = True
             print(f"(No trained de/het model at {MODEL_FILE}: run prepare_data.py and train.py)", flush=True)
         else:
             from app.model import load_networks
-            _networks, _vocab = load_networks(MODEL_FILE)
+            try:
+                _networks, _vocab = load_networks(MODEL_FILE)
+            except Exception as e:
+                # A broken or old-format model file must not break the lessons.
+                _model_missing = True
+                print(f"(Could not load the de/het model {MODEL_FILE}: {e!r}. "
+                      "Retrain with: python -m app.train)", flush=True)
     return _networks is not None
 
 

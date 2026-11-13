@@ -109,5 +109,22 @@ class Verdicts(unittest.TestCase):
                 self.assertEqual(row["article"], "de", word)
 
 
+class BrokenModel(unittest.TestCase):
+    def test_a_model_file_in_another_format_falls_back_instead_of_crashing(self):
+        import tempfile, torch
+        from unittest.mock import patch
+        from app import lesson_engine
+
+        with tempfile.TemporaryDirectory() as d:
+            bad = f"{d}/dehet_model.pt"
+            torch.save({"vocab": {"a": 2}, "something_else": 1}, bad)
+            with patch.object(lesson_engine, "MODEL_FILE", __import__("pathlib").Path(bad)), \
+                 patch.object(lesson_engine, "_networks", None), \
+                 patch.object(lesson_engine, "_model_missing", False):
+                self.assertFalse(lesson_engine.model_available())
+                self.assertEqual(ai_hint("stoel", "de")["verdict"], "default")
+                self.assertEqual(ai_hint("huis", "het")["verdict"], "memorize")
+
+
 if __name__ == "__main__":
     unittest.main()
