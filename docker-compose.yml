@@ -1,4 +1,23 @@
 services:
+  # PostgreSQL: accounts, settings and lesson history
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${DB_USER:-hettie}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-hettie}
+      POSTGRES_DB: ${DB_NAME:-hettie}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-hettie} -d ${DB_NAME:-hettie}"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+
+  # Python AI service: de/het neural network + Gemini (chat, speech, conversation)
   backend:
     build: ./backend
     ports:
@@ -6,10 +25,36 @@ services:
     volumes:
       - ./backend/app:/app/app
       - ./backend/data:/app/data
+      - ./backend/tests:/app/tests
     env_file:
       - .env
+    environment:
+      CORS_ORIGINS: http://localhost:5173
     restart: unless-stopped
 
+  # NestJS API: auth, users, settings, lessons (calls the AI service)
+  api:
+    build: ./api
+    ports:
+      - "3000:3000"
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USER: ${DB_USER:-hettie}
+      DB_PASSWORD: ${DB_PASSWORD:-hettie}
+      DB_NAME: ${DB_NAME:-hettie}
+      JWT_SECRET: ${JWT_SECRET:-hettie-local-docker-secret-change-me}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-7d}
+      AI_SERVICE_URL: http://backend:8000
+      CORS_ORIGINS: http://localhost:5173
+    depends_on:
+      db:
+        condition: service_healthy
+      backend:
+        condition: service_started
+    restart: unless-stopped
+
+  # React (Vite) frontend
   frontend:
     build: ./frontend
     ports:
@@ -18,7 +63,12 @@ services:
       - ./frontend:/app
       - /app/node_modules
     environment:
-      - VITE_API_URL=http://localhost:8000
+      VITE_API_URL: http://localhost:8000
+      VITE_USER_API_URL: http://localhost:3000
     depends_on:
       - backend
+      - api
     restart: unless-stopped
+
+volumes:
+  pgdata:
